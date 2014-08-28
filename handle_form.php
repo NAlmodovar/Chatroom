@@ -3,47 +3,43 @@
 <!--This first part will take the information and add it to the database
  lablesson, chatroom, -->
 
-<? 
-if( $_POST )
+<?php
+$con=mysqli_connect("localhost","root","nickolas", "lablesson");
+// Check connection
+if (mysqli_connect_errno()) {
+  echo "Failed to connect to MySQL: " . mysqli_connect_error();
+}
 
-//Here is where I should be able to connect to the database.
+// escape variables for security
+$period = mysqli_real_escape_string($con, $_POST['period']);
+$email = mysqli_real_escape_string($con, $_POST['email']);
+$comments = mysqli_real_escape_string($con, $_POST['comments']);
 
-$con = mysql_connect("localhost","root","nickolas");
+$sql="INSERT INTO chatroom 
+(email, period, comments, time)
+VALUES ('$email', '$period', '$comments', CURRENT_TIMESTAMP)";
 
-if (!$con)
-  {
-    die('Could not connect: ' . mysql_error());
-  }
-  
-  mysql_select_db("lablesson", $con)
- 
-// If that worked, I should be able to connect to the table 
+if (!mysqli_query($con,$sql)) {
+  die('Error: ' . mysqli_error($con));
+}
+echo "1 record added";
 
-  $period = $_POST['period'];
-  $email = $_POST['email'];
-  $comments = $_POST['comments'];
-  
-// Online tip to protect the form 
-
-  $email = mysql_real_escape_string($email);
-  $comments = mysql_real_escape_string($comments);
-  
-// The acutal part
-
-$query = "
-INSERT INTO `lablesson`.`chatroom` 
-(`email`, `period`, `comments`, `time`) 
-VALUES ('$email', '$period', '$comments', CURRENT_TIMESTAMP);
-
+mysqli_close($con);
 ?>
 
 
-<!--This second part should be what the User see as "Anonymous" 
+
+<!--This second part should be what the User see as "Anonymous"  
 It should just show the Email address and thats it.
 It will be impossible to edit however; unless the person has access to the database. -->
-
+<center>
+<p>
+<p>
+<p>
 <h4> Your email address is: <b> <?php echo $_POST["email"]; ?> </b> 
 <p> We will respond when you get a reply. </p> </h4>
 <p> Just 'X' out this tab. You're done. </p>
+</center>
+
 
 </body>
